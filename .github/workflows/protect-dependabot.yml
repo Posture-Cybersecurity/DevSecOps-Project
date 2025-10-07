@@ -1,5 +1,5 @@
 name: Protect Dependabot Alerts
-#########
+# This workflow protects against accidental dismissal of Dependabot alerts
 on:
   workflow_call:
     inputs:
