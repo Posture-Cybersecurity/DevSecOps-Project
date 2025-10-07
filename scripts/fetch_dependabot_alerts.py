@@ -8,7 +8,7 @@ import sys
 # Read GitHub token from environment (set in CI)
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", "").strip()
 OWNER = "Posture-Cybersecurity"
-REPO = "maxone-vehicle-service"
+REPO = "DevSecOps-Project"
 OUTPUT_FILE = "DevSecOps-Demo.csv"
 
 # Severities we care about
