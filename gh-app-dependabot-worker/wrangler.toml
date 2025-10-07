@@ -1,0 +1,7 @@
+name = "gh-app-dependabot-worker"
+main = "src/index.js"
+compatibility_date = "2024-10-01"
+
+[vars]
+# Optional: restrict which repos this Worker will service (comma-separated list)
+REPO_ALLOWLIST = "Posture-Cybersecurity/DevSecOps-Project"
