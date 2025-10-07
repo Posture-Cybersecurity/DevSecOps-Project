@@ -17,5 +17,5 @@ jobs:
   call-protector:
     uses: Posture-Cybersecurity/.github/.github/workflows/protect-dependabot.yml@main
     with:
-      alert_number: ${{ inputs.alert_number }}
+      alert_number: ${{ format('{0}', inputs.alert_number) }}
     secrets: inherit
