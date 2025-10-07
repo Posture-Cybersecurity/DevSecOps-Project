@@ -1,13 +1,14 @@
 name: Protect Dependabot Alerts
 # This workflow protects against accidental dismissal of Dependabot alerts
 on:
+on:
   workflow_dispatch:
     inputs:
       alert_number:
+        description: "Dependabot alert number"
         required: true
         type: string
-  repository_dispatch:
-    types: [dependabot_alert_dismissed]
+        default: "0"
 
 permissions:
   contents: read
