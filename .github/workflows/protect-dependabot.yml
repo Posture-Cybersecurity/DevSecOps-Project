@@ -1,9 +1,8 @@
 name: Protect Dependabot Alerts
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       alert_number:
-        description: "Dependabot alert number to test with"
         required: true
         type: string
 # 
@@ -15,5 +14,5 @@ jobs:
   call-protector:
     uses: Posture-Cybersecurity/.github/.github/workflows/protect-dependabot.yml@main
     with:
-      alert_number: ${{ inputs.alert_number || github.event.alert.number }}
+      alert_number: ${{ inputs.alert_number }}
     secrets: inherit
