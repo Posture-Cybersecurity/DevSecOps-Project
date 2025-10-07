@@ -1,11 +1,14 @@
 name: Protect Dependabot Alerts
+
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
       alert_number:
         required: true
         type: string
-# 
+  repository_dispatch:
+    types: [dependabot_alert_dismissed]
+
 permissions:
   contents: read
   security-events: write
@@ -14,5 +17,5 @@ jobs:
   call-protector:
     uses: Posture-Cybersecurity/.github/.github/workflows/protect-dependabot.yml@main
     with:
-      alert_number: ${{ inputs.alert_number }}
+      alert_number: ${{ github.event.client_payload.alert_number || inputs.alert_number }}
     secrets: inherit
