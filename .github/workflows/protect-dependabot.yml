@@ -1,6 +1,5 @@
 name: Protect Dependabot Alerts
-# This workflow protects against accidental dismissal of Dependabot alerts
-on:
+
 on:
   workflow_dispatch:
     inputs:
@@ -8,15 +7,56 @@ on:
         description: "Dependabot alert number"
         required: true
         type: string
-        default: "0"
+  repository_dispatch:
+    types: [dependabot_alert_dismissed]
 
 permissions:
   contents: read
   security-events: write
 
 jobs:
-  call-protector:
-    uses: Posture-Cybersecurity/.github/.github/workflows/protect-dependabot.yml@main
-    with:
-      alert_number: ${{ format('{0}', inputs.alert_number) }}
-    secrets: inherit
+  protect:
+    runs-on: ubuntu-latest
+    env:
+      # Prefer payload from repository_dispatch, else manual input
+      ALERT_NUMBER: ${{ github.event.client_payload.alert_number || inputs.alert_number }}
+      ACTOR: ${{ github.actor }}
+      REPO: ${{ github.repository }}
+      GCHAT_WEBHOOK_URL: ${{ secrets.GCHAT_WEBHOOK_URL }}
+    steps:
+      - name: Validate alert number (string but must be digits)
+        run: |
+          if ! [[ "${ALERT_NUMBER}" =~ ^[0-9]+$ ]]; then
+            echo "Invalid ALERT_NUMBER: ${ALERT_NUMBER}"
+            exit 1
+          fi
+
+      - name: Check authorization and act
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Allowed dismissers
+          LEADS=("lead1" "lead2" "securityperson")
+
+          if [[ ! " ${LEADS[@]} " =~ " ${ACTOR} " ]]; then
+            echo "❌ Unauthorized dismissal by ${ACTOR} for alert ${ALERT_NUMBER}"
+
+            # Reopen the alert
+            curl -sS -X PATCH \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+              "https://api.github.com/repos/${REPO}/dependabot/alerts/${ALERT_NUMBER}" \
+              -d '{"state":"open"}' || true
+
+            # Optional: notify GChat if webhook is set
+            if [[ -n "${GCHAT_WEBHOOK_URL}" ]]; then
+              MESSAGE="⚠️ Dependabot alert dismissed by unauthorized user ${ACTOR} in ${REPO}. Alert ${ALERT_NUMBER} reopened."
+              curl -sS -X POST -H "Content-Type: application/json" \
+                -d "{\"text\": \"${MESSAGE}\"}" \
+                "${GCHAT_WEBHOOK_URL}" || true
+            fi
+
+            exit 1
+          else
+            echo "✅ Dismissal authorized by ${ACTOR} for alert ${ALERT_NUMBER}"
+          fi
