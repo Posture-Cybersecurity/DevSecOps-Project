@@ -1,7 +1,7 @@
 name: Protect Dependabot Alerts
-
+#########
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       alert_number:
         required: true
