@@ -9,7 +9,7 @@ import sys
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", "").strip()
 OWNER = "Posture-Cybersecurity"
 REPO = "DevSecOps-Project"
-OUTPUT_FILE = "DevSecOps-Demo.csv"
+OUTPUT_FILE = "dependabot_alerts.csv"
 
 # Severities we care about
 SEVERITIES = {"critical", "high", "medium"}
