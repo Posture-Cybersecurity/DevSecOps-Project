@@ -33,7 +33,7 @@ jobs:
 
       - name: Check authorization and act
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.DEPENDABOT_TOKEN }}  # Use PAT instead of default token
         run: |
           # Allowed dismissers
           LEADS=("lead1" "lead2" "securityperson")
