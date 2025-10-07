@@ -17,5 +17,5 @@ jobs:
   call-protector:
     uses: Posture-Cybersecurity/.github/.github/workflows/protect-dependabot.yml@main
     with:
-      alert_number: "${{ github.event_name == 'repository_dispatch' && github.event.client_payload.alert_number || inputs.alert_number }}"
+      alert_number: ${{ toJSON(inputs.alert_number) }}
     secrets: inherit
